@@ -13,11 +13,11 @@ import (
 
 	"k8s.io/client-go/tools/cache"
 
+	"github.com/DataDog/datadog-agent/comp/workloadmeta"
 	"github.com/DataDog/datadog-agent/pkg/config"
 	"github.com/DataDog/datadog-agent/pkg/status/health"
 	"github.com/DataDog/datadog-agent/pkg/util/kubernetes/apiserver"
 	"github.com/DataDog/datadog-agent/pkg/util/log"
-	"github.com/DataDog/datadog-agent/pkg/workloadmeta"
 
 	"k8s.io/client-go/kubernetes"
 )
@@ -28,12 +28,10 @@ const (
 	noResync      = time.Duration(0)
 )
 
-type collector struct{}
-
 // storeGenerator returns a new store specific to a given resource
 type storeGenerator func(context.Context, workloadmeta.Store, kubernetes.Interface) (*cache.Reflector, *reflectorStore)
 
-func storeGenerators(cfg config.Config) []storeGenerator {
+func storeGenerators(cfg config.ConfigReader) []storeGenerator {
 	generators := []storeGenerator{newNodeStore}
 
 	if cfg.GetBool("cluster_agent.collect_kubernetes_tags") {
@@ -43,13 +41,19 @@ func storeGenerators(cfg config.Config) []storeGenerator {
 	return generators
 }
 
-func init() {
-	workloadmeta.RegisterClusterCollector(collectorID, func() workloadmeta.Collector {
-		return &collector{}
-	})
+type collector struct {
+	id string
 }
 
-func (c *collector) Start(ctx context.Context, wlmetaStore workloadmeta.Store) error {
+func NewCollector() collectors.CollectorProvider {
+	return collectors.CollectorProvider{
+		Collector: &collector{
+			id: collectorID,
+		},
+	}
+}
+
+func (c *collector) Start(ctx context.Context, wlmetaStore workloadmeta.Component) error {
 	var objectStores []*reflectorStore
 
 	apiserverClient, err := apiserver.GetAPIClient()
@@ -58,6 +62,7 @@ func (c *collector) Start(ctx context.Context, wlmetaStore workloadmeta.Store) e
 	}
 	client := apiserverClient.Cl
 
+	// TODO(components): do not use the config.Datadog reference, use a component instead
 	for _, storeBuilder := range storeGenerators(config.Datadog) {
 		reflector, store := storeBuilder(ctx, wlmetaStore, client)
 		objectStores = append(objectStores, store)
@@ -69,6 +74,10 @@ func (c *collector) Start(ctx context.Context, wlmetaStore workloadmeta.Store) e
 
 func (c *collector) Pull(_ context.Context) error {
 	return nil
+}
+
+func (c *collector) GetID() string {
+	return c.id
 }
 
 func startReadiness(ctx context.Context, stores []*reflectorStore) {

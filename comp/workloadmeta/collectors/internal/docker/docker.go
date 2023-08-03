@@ -24,6 +24,7 @@ import (
 	"github.com/docker/go-connections/nat"
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 
+	"github.com/DataDog/datadog-agent/comp/workloadmeta"
 	"github.com/DataDog/datadog-agent/pkg/config"
 	"github.com/DataDog/datadog-agent/pkg/errors"
 	"github.com/DataDog/datadog-agent/pkg/status/health"
@@ -31,7 +32,6 @@ import (
 	"github.com/DataDog/datadog-agent/pkg/util/docker"
 	"github.com/DataDog/datadog-agent/pkg/util/log"
 	"github.com/DataDog/datadog-agent/pkg/util/pointer"
-	"github.com/DataDog/datadog-agent/pkg/workloadmeta"
 )
 
 const (
@@ -42,7 +42,7 @@ const (
 type resolveHook func(ctx context.Context, co types.ContainerJSON) (string, error)
 
 type collector struct {
-	store workloadmeta.Store
+	store workloadmeta.Component
 
 	dockerUtil        *docker.DockerUtil
 	containerEventsCh <-chan *docker.ContainerEvent
@@ -60,13 +60,15 @@ type collector struct {
 	scanOptions sbom.ScanOptions // nolint: unused
 }
 
-func init() {
-	workloadmeta.RegisterCollector(collectorID, func() workloadmeta.Collector {
-		return &collector{}
-	})
+func NewCollector() collectors.CollectorProvider {
+	return collectors.CollectorProvider{
+		Collector: &collector{
+			id: collectorID,
+		},
+	}
 }
 
-func (c *collector) Start(ctx context.Context, store workloadmeta.Store) error {
+func (c *collector) Start(ctx context.Context, store workloadmeta.Component) error {
 	if !config.IsFeaturePresent(config.Docker) {
 		return errors.NewDisabled(componentName, "Agent is not running on Docker")
 	}
@@ -110,6 +112,10 @@ func (c *collector) Start(ctx context.Context, store workloadmeta.Store) error {
 
 func (c *collector) Pull(ctx context.Context) error {
 	return nil
+}
+
+func (c *collector) GetID() string {
+	return c.id
 }
 
 func (c *collector) stream(ctx context.Context) {

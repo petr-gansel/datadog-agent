@@ -13,6 +13,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DataDog/datadog-agent/comp/workloadmeta"
+	"github.com/DataDog/datadog-agent/comp/workloadmeta/collectors"
 	apiv1 "github.com/DataDog/datadog-agent/pkg/clusteragent/api/v1"
 	"github.com/DataDog/datadog-agent/pkg/config"
 	"github.com/DataDog/datadog-agent/pkg/errors"
@@ -21,7 +23,6 @@ import (
 	"github.com/DataDog/datadog-agent/pkg/util/kubernetes/kubelet"
 	"github.com/DataDog/datadog-agent/pkg/util/log"
 	"github.com/DataDog/datadog-agent/pkg/util/retry"
-	"github.com/DataDog/datadog-agent/pkg/workloadmeta"
 )
 
 const (
@@ -30,7 +31,8 @@ const (
 )
 
 type collector struct {
-	store                  workloadmeta.Store
+	id                     string
+	store                  workloadmeta.Component
 	seen                   map[workloadmeta.EntityID]struct{}
 	kubeUtil               kubelet.KubeUtilInterface
 	apiClient              *apiserver.APIClient
@@ -41,16 +43,17 @@ type collector struct {
 	collectNamespaceLabels bool
 }
 
-func init() {
-	workloadmeta.RegisterCollector(collectorID, func() workloadmeta.Collector {
-		return &collector{
+func NewCollector() collectors.CollectorProvider {
+	return collectors.CollectorProvider{
+		Collector: &collector{
+			id:   collectorID,
 			seen: make(map[workloadmeta.EntityID]struct{}),
-		}
-	})
+		},
+	}
 }
 
 // Start tries to connect to the kubelet, the DCA and the API Server if the DCA is not available.
-func (c *collector) Start(_ context.Context, store workloadmeta.Store) error {
+func (c *collector) Start(_ context.Context, store workloadmeta.Component) error {
 	if !config.IsFeaturePresent(config.Kubernetes) {
 		return errors.NewDisabled(componentName, "Agent is not running on Kubernetes")
 	}
@@ -152,6 +155,10 @@ func (c *collector) Pull(ctx context.Context) error {
 	c.lastUpdate = time.Now()
 
 	return nil
+}
+
+func (c *collector) GetID() string {
+	return c.id
 }
 
 // parsePods returns collection events based on a given podlist.
