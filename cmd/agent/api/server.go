@@ -19,8 +19,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/DataDog/datadog-agent/pkg/workloadmeta"
-	workloadmetaServer "github.com/DataDog/datadog-agent/pkg/workloadmeta/server"
+	"github.com/DataDog/datadog-agent/comp/workloadmeta"
+	workloadmetaServer "github.com/DataDog/datadog-agent/comp/workloadmeta/server"
 	"github.com/cihub/seelog"
 	gorilla "github.com/gorilla/mux"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -54,6 +54,7 @@ func StartServer(
 	dogstatsdServer dogstatsdServer.Component,
 	capture replay.Component,
 	serverDebug dogstatsdDebug.Component,
+	wmeta workloadmeta.Component,
 	logsAgent pkgUtil.Optional[logsAgent.Component],
 ) error {
 	initializeTLS()
@@ -85,7 +86,7 @@ func StartServer(
 	pb.RegisterAgentSecureServer(s, &serverSecure{
 		configService:      configService,
 		taggerServer:       taggerserver.NewServer(tagger.GetDefaultTagger()),
-		workloadmetaServer: workloadmetaServer.NewServer(workloadmeta.GetGlobalStore()),
+		workloadmetaServer: workloadmetaServer.NewServer(wmeta),
 		dogstatsdServer:    dogstatsdServer,
 		capture:            capture,
 	})
