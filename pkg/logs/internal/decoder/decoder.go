@@ -26,19 +26,18 @@ const defaultContentLenLimit = 256 * 1000
 
 // NewInput returns a new input.
 func NewInput(content []byte) *message.Message {
-	return &message.Message{
-		Content: content,
-	}
+	return message.NewMessage(content, nil, "", 0)
 }
 
 // NewMessage returns a new output.
 func NewMessage(content []byte, status string, rawDataLen int, readTimestamp string) *message.Message {
 	return &message.Message{
-		Content:            content,
+		MessageContent: message.MessageContent{
+			Content: content,
+		},
 		Status:             status,
 		RawDataLen:         rawDataLen,
 		IngestionTimestamp: time.Now().UnixNano(),
-
 		ParsingExtra: message.ParsingExtra{
 			Timestamp: readTimestamp,
 		},

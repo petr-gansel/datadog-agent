@@ -165,14 +165,14 @@ func (fr *Framer) Process(input *message.Message) {
 		copy(owned, content)
 
 		c := &message.Message{
-			Content:            owned,
+			MessageContent: message.MessageContent{
+				Content: owned,
+			},
 			Origin:             input.Origin,
 			Status:             input.Status,
 			IngestionTimestamp: input.IngestionTimestamp,
-			ServerlessExtra: message.ServerlessExtra{
-				Timestamp: input.ServerlessExtra.Timestamp,
-				Lambda:    input.ServerlessExtra.Lambda,
-			},
+			ParsingExtra:       input.ParsingExtra,
+			ServerlessExtra:    input.ServerlessExtra,
 		}
 
 		fr.outputFn(c, rawDataLen)

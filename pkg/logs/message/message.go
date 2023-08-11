@@ -27,7 +27,7 @@ type Payload struct {
 
 // Message represents a log line sent to datadog, with its metadata
 type Message struct {
-	Content            []byte
+	MessageContent
 	Origin             *Origin
 	Status             string
 	IngestionTimestamp int64
@@ -36,6 +36,15 @@ type Message struct {
 	ParsingExtra
 	// Extra information for Serverless Logs messages
 	ServerlessExtra
+}
+
+// MessageContent contains the message and the tailer internal representation
+// of every message.
+// TODO(remy): better comment this
+type MessageContent struct {
+	Content      []byte
+	Payload      []byte
+	IsStructured bool
 }
 
 // ParsingExtra ships extra information parsers want to make available
@@ -71,7 +80,24 @@ func NewMessageWithSource(content []byte, status string, source *sources.LogSour
 // NewMessage constructs message with content, status, origin and the ingestion timestamp.
 func NewMessage(content []byte, origin *Origin, status string, ingestionTimestamp int64) *Message {
 	return &Message{
-		Content:            content,
+		MessageContent: MessageContent{
+			Content:      content,
+			IsStructured: false,
+		},
+		Origin:             origin,
+		Status:             status,
+		IngestionTimestamp: ingestionTimestamp,
+	}
+}
+
+// TODO(remy): comment me
+func NewStructuredMessage(content []byte, payload []byte, origin *Origin, status string, ingestionTimestamp int64) *Message {
+	return &Message{
+		MessageContent: MessageContent{
+			Content:      content,
+			Payload:      payload,
+			IsStructured: true,
+		},
 		Origin:             origin,
 		Status:             status,
 		IngestionTimestamp: ingestionTimestamp,
@@ -81,7 +107,10 @@ func NewMessage(content []byte, origin *Origin, status string, ingestionTimestam
 // NewMessageFromLambda construts a message with content, status, origin and with the given timestamp and Lambda metadata
 func NewMessageFromLambda(content []byte, origin *Origin, status string, utcTime time.Time, ARN, reqID string, ingestionTimestamp int64) *Message {
 	return &Message{
-		Content:            content,
+		MessageContent: MessageContent{
+			Content:      content,
+			IsStructured: false,
+		},
 		Origin:             origin,
 		Status:             status,
 		IngestionTimestamp: ingestionTimestamp,

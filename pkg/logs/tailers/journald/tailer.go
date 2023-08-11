@@ -45,10 +45,14 @@ type Tailer struct {
 	}
 	stop chan struct{}
 	done chan struct{}
+	// v1behavior indicates if we want to process and send the whole structured log message
+	// instead of on the logs content. Note that the default behavior is now to only send
+	// the logs content, as other tailers do.
+	v1behavior bool
 }
 
 // NewTailer returns a new tailer.
-func NewTailer(source *sources.LogSource, outputChan chan *message.Message, journal Journal) *Tailer {
+func NewTailer(source *sources.LogSource, outputChan chan *message.Message, journal Journal, v1behavior bool) *Tailer {
 	return &Tailer{
 		decoder:    decoder.NewDecoderWithFraming(sources.NewReplaceableSource(source), journald.New(), framer.NoFraming, nil, status.NewInfoRegistry()),
 		source:     source,
@@ -56,6 +60,7 @@ func NewTailer(source *sources.LogSource, outputChan chan *message.Message, jour
 		journal:    journal,
 		stop:       make(chan struct{}, 1),
 		done:       make(chan struct{}, 1),
+		v1behavior: v1behavior,
 	}
 }
 
@@ -242,15 +247,30 @@ func (t *Tailer) tail() {
 			if t.shouldDrop(entry) {
 				continue
 			}
+
+			content, jsonPayload := t.getContent(entry)
+			var msg *message.Message
+			if t.v1behavior {
+				msg = message.NewMessage(
+					jsonPayload,
+					t.getOrigin(entry),
+					t.getStatus(entry),
+					time.Now().UnixNano(),
+				)
+			} else {
+				msg = message.NewStructuredMessage(
+					content,
+					jsonPayload,
+					t.getOrigin(entry),
+					t.getStatus(entry),
+					time.Now().UnixNano(),
+				)
+			}
+
 			select {
 			case <-t.stop:
 				return
-			case t.decoder.InputChan <- message.NewMessage(
-				t.getContent(entry),
-				t.getOrigin(entry),
-				t.getStatus(entry),
-				time.Now().UnixNano(),
-			):
+			case t.decoder.InputChan <- msg:
 			}
 		}
 	}
@@ -307,24 +327,26 @@ func (t *Tailer) shouldDrop(entry *sdjournal.JournalEntry) bool {
 //     ...
 //     }
 //     }
-func (t *Tailer) getContent(entry *sdjournal.JournalEntry) []byte {
+func (t *Tailer) getContent(entry *sdjournal.JournalEntry) ([]byte, []byte) {
 	payload := make(map[string]interface{})
 	fields := entry.Fields
-	if message, exists := fields[sdjournal.SD_JOURNAL_FIELD_MESSAGE]; exists {
-		payload["message"] = message
+	var msg string
+	var exists bool
+	if msg, exists = fields[sdjournal.SD_JOURNAL_FIELD_MESSAGE]; exists {
+		payload["message"] = msg
 		delete(fields, sdjournal.SD_JOURNAL_FIELD_MESSAGE)
 	}
 	payload["journald"] = fields
 
-	content, err := json.Marshal(payload)
+	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
+		// XXX(remy): we should log an error here
 		// ensure the message has some content if the json encoding failed
 		value, _ := entry.Fields[sdjournal.SD_JOURNAL_FIELD_MESSAGE]
-		content = []byte(value)
+		msg = value
 	}
-	t.source.BytesRead.Add(int64(len(content)))
-
-	return content
+	t.source.BytesRead.Add(int64(len(jsonPayload)))
+	return []byte(msg), jsonPayload
 }
 
 // getOrigin returns the message origin computed from the journal entry

@@ -39,6 +39,10 @@ const (
 type Config struct {
 	ChannelPath string
 	Query       string
+	// V1Behavior indicates if we want to process and send the whole structured log message
+	// instead of on the logs content. Note that the default behavior is now to only send
+	// the logs content, as other tailers do.
+	V1Behavior  bool
 }
 
 // eventContext links go and c
@@ -148,7 +152,18 @@ func (t *Tailer) toMessage(re *richEvent) (*message.Message, error) { //nolint:u
 	}
 	jsonEvent = replaceTextKeyToValue(jsonEvent)
 	log.Debug("Sending JSON:", string(jsonEvent))
-	return message.NewMessageWithSource(jsonEvent, message.StatusInfo, t.source, time.Now().UnixNano()), nil
+	
+	if (t.config.V1Behavior) {
+		return message.NewMessageWithSource(jsonEvent, message.StatusInfo, t.source, time.Now().UnixNano()), nil
+	} else {
+		return message.NewStructuredMessage(
+		    []byte(re.message),
+			jsonEvent,
+			message.NewOrigin(t.source),
+			message.StatusInfo,
+			time.Now().UnixNano(),
+		), nil
+	}
 }
 
 // EventID sometimes comes in like <EventID>7036</EventID>
