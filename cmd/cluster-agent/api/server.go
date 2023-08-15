@@ -29,6 +29,7 @@ import (
 
 	"github.com/DataDog/datadog-agent/cmd/cluster-agent/api/agent"
 	v1 "github.com/DataDog/datadog-agent/cmd/cluster-agent/api/v1"
+	"github.com/DataDog/datadog-agent/comp/workloadmeta"
 	"github.com/DataDog/datadog-agent/pkg/api/security"
 	"github.com/DataDog/datadog-agent/pkg/api/util"
 	"github.com/DataDog/datadog-agent/pkg/config"
@@ -45,16 +46,16 @@ var (
 )
 
 // StartServer creates the router and starts the HTTP server
-func StartServer() error {
+func StartServer(w workloadmeta.Component) error {
 	// create the root HTTP router
 	router = mux.NewRouter()
 	apiRouter = router.PathPrefix("/api/v1").Subrouter()
 
 	// IPC REST API server
-	agent.SetupHandlers(router)
+	agent.SetupHandlers(router, w)
 
 	// API V1 Metadata APIs
-	v1.InstallMetadataEndpoints(apiRouter)
+	v1.InstallMetadataEndpoints(apiRouter, w)
 
 	// Validate token for every request
 	router.Use(validateToken)

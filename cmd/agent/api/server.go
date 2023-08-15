@@ -121,7 +121,7 @@ func StartServer(
 	checkMux.Use(validateToken)
 
 	mux := http.NewServeMux()
-	mux.Handle("/agent/", http.StripPrefix("/agent", agent.SetupHandlers(agentMux, flare, dogstatsdServer, serverDebug, logsAgent)))
+	mux.Handle("/agent/", http.StripPrefix("/agent", agent.SetupHandlers(agentMux, flare, dogstatsdServer, serverDebug, wmeta, logsAgent)))
 	mux.Handle("/check/", http.StripPrefix("/check", check.SetupHandlers(checkMux)))
 	mux.Handle("/", gwmux)
 
