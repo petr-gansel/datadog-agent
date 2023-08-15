@@ -12,15 +12,17 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DataDog/datadog-agent/comp/workloadmeta"
 	"github.com/DataDog/datadog-agent/pkg/util/containers/metrics/provider"
 	"github.com/DataDog/datadog-agent/pkg/util/kubernetes/kubelet/mock"
 	"github.com/DataDog/datadog-agent/pkg/util/pointer"
-	"github.com/DataDog/datadog-agent/pkg/workloadmeta"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestKubeletCollectorLinux(t *testing.T) {
+	// FIXME(components): these tests are broken until they adopt the new
+	//                    workloadmeta component testing logic.
 	metadataStore := workloadmeta.NewMockStore()
 	kubeletMock := mock.NewKubeletMock()
 
@@ -143,6 +145,8 @@ func TestKubeletCollectorLinux(t *testing.T) {
 }
 
 func TestKubeletCollectorWindows(t *testing.T) {
+	// FIXME(components): these tests are broken until they adopt the new
+	//                    workloadmeta component testing logic.
 	metadataStore := workloadmeta.NewMockStore()
 	kubeletMock := mock.NewKubeletMock()
 

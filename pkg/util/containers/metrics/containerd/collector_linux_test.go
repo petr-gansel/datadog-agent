@@ -22,11 +22,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/anypb"
 
+	"github.com/DataDog/datadog-agent/comp/workloadmeta"
+	workloadmetaTesting "github.com/DataDog/datadog-agent/comp/workloadmeta/testing"
 	"github.com/DataDog/datadog-agent/pkg/util/containers/metrics/provider"
 	"github.com/DataDog/datadog-agent/pkg/util/pointer"
 	"github.com/DataDog/datadog-agent/pkg/util/system"
-	"github.com/DataDog/datadog-agent/pkg/workloadmeta"
-	workloadmetaTesting "github.com/DataDog/datadog-agent/pkg/workloadmeta/testing"
 )
 
 func TestGetContainerStats_Containerd(t *testing.T) {
@@ -266,6 +266,9 @@ func TestGetContainerStats_Containerd(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			containerID := "1"
 
+			// FIXME(components): these tests are broken until they adopt the new
+			//                    workloadmeta component testing logic.
+
 			// The container needs to exist in the workloadmeta store and have a
 			// namespace.
 			workloadmetaStore := workloadmetaTesting.NewStore()
@@ -358,6 +361,9 @@ func TestGetContainerNetworkStats_Containerd(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			containerID := "1"
+
+			// FIXME(components): these tests are broken until they adopt the new
+			//                    workloadmeta component testing logic.
 
 			// The container needs to exist in the workloadmeta store and have a
 			// namespace.
