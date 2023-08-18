@@ -664,3 +664,6 @@ replace github.com/moby/buildkit v0.11.0 => github.com/moby/buildkit v0.11.4
 
 // Fixes a panic in trivy, see gitlab.com/cznic/libc/-/issues/25
 replace modernc.org/sqlite v1.17.3 => modernc.org/sqlite v1.19.3
+
+// Fentry performance and attach workarounds
+replace github.com/cilium/ebpf => github.com/paulcacheux/ebpf v0.11.1-0.20230818105802-383bb76e4736
