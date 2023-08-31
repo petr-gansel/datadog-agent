@@ -7,12 +7,15 @@
 
 package utils
 
+// PathPatternBuilderOpts PathPatternBuilder options
 type PathPatternBuilderOpts struct {
 	WildcardLimit      int // max number of wildcard in the pattern
 	PrefixNodeRequired int // number of prefix nodes required
 	SuffixNodeRequired int // number of suffix nodes required
+	NodeSizeLimit      int // min size required to substitute with a wildcard
 }
 
+// PathPatternBuilder pattern builder for files
 func PathPatternBuilder(pattern string, path string, opts PathPatternBuilderOpts) (bool, string) {
 	if len(pattern) > len(path) {
 		return false, ""
@@ -28,6 +31,7 @@ func PathPatternBuilder(pattern string, path string, opts PathPatternBuilderOpts
 		j             = 0
 		prefixNodes   = 0
 		suffixNodes   = 0
+		nodeSize      = 0
 	)
 
 	for i < len(pattern) && j < len(path) {
@@ -36,7 +40,12 @@ func PathPatternBuilder(pattern string, path string, opts PathPatternBuilderOpts
 
 			// skip the remaining char of path until the next node
 			for j < len(path) && path[j] != '/' {
+				nodeSize++
 				j++
+			}
+
+			if nodeSize > 0 && nodeSize < opts.NodeSizeLimit {
+				return false, ""
 			}
 
 			result[size] = '*'
@@ -55,7 +64,12 @@ func PathPatternBuilder(pattern string, path string, opts PathPatternBuilderOpts
 				} else {
 					suffixNodes++
 				}
+			} else if inPattern {
+				if nodeSize < opts.NodeSizeLimit {
+					return false, ""
+				}
 			}
+
 			inPattern = false
 		}
 
@@ -76,6 +90,7 @@ func PathPatternBuilder(pattern string, path string, opts PathPatternBuilderOpts
 				result[size] = '*'
 				size++
 			}
+			nodeSize++
 		} else if !inPattern {
 			result[size] = pattern[i]
 			size++
@@ -89,7 +104,7 @@ func PathPatternBuilder(pattern string, path string, opts PathPatternBuilderOpts
 		suffixNodes++
 	}
 
-	if i == len(result) && j == len(path) && (opts.PrefixNodeRequired == 0 || opts.PrefixNodeRequired <= prefixNodes) && (opts.SuffixNodeRequired == 0 || opts.SuffixNodeRequired <= suffixNodes) {
+	if i == len(result) && j == len(path) && (wildcardCount == 0 || ((opts.PrefixNodeRequired == 0 || opts.PrefixNodeRequired <= prefixNodes) && (opts.SuffixNodeRequired == 0 || opts.SuffixNodeRequired <= suffixNodes))) {
 		return true, string(result[0:size])
 	}
 
