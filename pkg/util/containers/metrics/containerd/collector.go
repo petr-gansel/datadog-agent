@@ -17,7 +17,7 @@ import (
 	"github.com/containerd/typeurl"
 	prototypes "github.com/gogo/protobuf/types"
 
-	"github.com/DataDog/datadog-agent/comp/workloadmeta"
+	"github.com/DataDog/datadog-agent/comp/core/workloadmeta"
 	"github.com/DataDog/datadog-agent/pkg/config"
 	"github.com/DataDog/datadog-agent/pkg/util/containerd"
 	cutil "github.com/DataDog/datadog-agent/pkg/util/containerd"
