@@ -8,8 +8,8 @@ package server
 import (
 	"time"
 
-	"github.com/DataDog/datadog-agent/comp/workloadmeta"
-	"github.com/DataDog/datadog-agent/comp/workloadmeta/telemetry"
+	"github.com/DataDog/datadog-agent/comp/core/workloadmeta"
+	"github.com/DataDog/datadog-agent/comp/core/workloadmeta/telemetry"
 	pb "github.com/DataDog/datadog-agent/pkg/proto/pbgo/core"
 	"github.com/DataDog/datadog-agent/pkg/util/grpc"
 	"github.com/DataDog/datadog-agent/pkg/util/log"
