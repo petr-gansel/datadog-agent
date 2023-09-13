@@ -60,6 +60,8 @@
     - $S3_CP_CMD $S3_ARTIFACTS_URI/minimized-btfs-${PACKAGE_ARCH}.tar.xz /tmp/system-probe/minimized-btfs.tar.xz
     - chmod 0644 /tmp/system-probe/*.o
     - chmod 0744 /tmp/system-probe/system-probe /tmp/system-probe/clang-bpf /tmp/system-probe/llc-bpf
+    - git config --global user.name 'bits@datadoghq.com'
+    - git config --global user.email package@datadoghq.com
     - inv -e agent.omnibus-build --release-version "$RELEASE_VERSION" --major-version "$AGENT_MAJOR_VERSION" --python-runtimes "$PYTHON_RUNTIMES" --base-dir $OMNIBUS_BASE_DIR ${USE_S3_CACHING} --skip-deps --go-mod-cache="$GOPATH/pkg/mod" --system-probe-bin=/tmp/system-probe ${FLAVOR:+--flavor $FLAVOR}
     - ls -la $OMNIBUS_PACKAGE_DIR
     - $S3_CP_CMD $OMNIBUS_PACKAGE_DIR/datadog${FLAVOR:+-$FLAVOR}-agent_*_${PACKAGE_ARCH}.deb $S3_ARTIFACTS_URI/$DESTINATION_DEB
