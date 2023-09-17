@@ -125,9 +125,10 @@ const (
 	ECSLaunchTypeFargate ECSLaunchType = "fargate"
 )
 
-// Define workloadmeta agent type
+// AgentType defines the workloadmeta agent type
 type AgentType uint8
 
+// Define types of agent for catalog
 const (
 	NodeAgent AgentType = 1 << iota
 	ClusterAgent

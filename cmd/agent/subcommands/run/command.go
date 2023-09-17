@@ -341,7 +341,10 @@ func getSharedFxOption() fx.Option {
 				catalog = workloadmeta.NodeAgent
 			}
 
-			return workloadmeta.Params{AgentType: catalog}
+			return workloadmeta.Params{
+				AgentType:  catalog,
+				InitHelper: common.GetWorkloadmetaInit(),
+			}
 		}),
 		fx.Supply(context.Background()),
 		workloadmeta.Module,
@@ -358,8 +361,6 @@ func getSharedFxOption() fx.Option {
 					// Main context passed to components
 					common.MainCtx, common.MainCtxCancel = context.WithCancel(context.Background())
 
-					// create and setup the Autoconfig instance
-					common.LoadComponents(common.MainCtx, aggregator.GetSenderManager(), pkgconfig.Datadog.GetString("confd_path"))
 					return nil
 				},
 			})
@@ -534,7 +535,7 @@ func startAgent(
 	}
 
 	// create and setup the Autoconfig instance
-	common.LoadComponents(common.MainCtx, wmeta, pkgconfig.Datadog.GetString("confd_path"))
+	common.LoadComponents(common.MainCtx, aggregator.GetSenderManager(), pkgconfig.Datadog.GetString("confd_path"))
 
 	if logsAgent, ok := logsAgent.Get(); ok {
 		// TODO: (components) - once adScheduler is a component, inject it into the logs agent.

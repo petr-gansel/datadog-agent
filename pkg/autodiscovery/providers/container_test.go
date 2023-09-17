@@ -28,6 +28,7 @@ func TestProcessEvents(t *testing.T) {
 		config.MockModule,
 		log.MockModule,
 		collectors.GetCatalog(),
+		fx.Supply(workloadmeta.NewParams()),
 		workloadmeta.MockModuleV2,
 	))
 
@@ -388,6 +389,7 @@ func TestGenerateConfig(t *testing.T) {
 				log.MockModule,
 				fx.Replace(config.MockParams{Overrides: overrides}),
 				collectors.GetCatalog(),
+				fx.Supply(workloadmeta.NewParams()),
 				workloadmeta.MockModuleV2,
 			))
 

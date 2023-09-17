@@ -29,7 +29,7 @@ const (
 )
 
 // storeGenerator returns a new store specific to a given resource
-type storeGenerator func(context.Context, workloadmeta.Store, kubernetes.Interface) (*cache.Reflector, *reflectorStore)
+type storeGenerator func(context.Context, workloadmeta.Component, kubernetes.Interface) (*cache.Reflector, *reflectorStore)
 
 func storeGenerators(cfg config.ConfigReader) []storeGenerator {
 	generators := []storeGenerator{newNodeStore}
@@ -46,6 +46,7 @@ type collector struct {
 	catalog workloadmeta.AgentType
 }
 
+// NewCollector returns a kubeapiserver CollectorProvider that instantiates its colletor
 func NewCollector() (workloadmeta.CollectorProvider, error) {
 	return workloadmeta.CollectorProvider{
 		Collector: &collector{
@@ -55,6 +56,7 @@ func NewCollector() (workloadmeta.CollectorProvider, error) {
 	}, nil
 }
 
+// GetFxOptions returns the FX framework options for the collector
 func GetFxOptions() fx.Option {
 	return fx.Provide(NewCollector)
 }
@@ -84,6 +86,10 @@ func (c *collector) Pull(_ context.Context) error {
 
 func (c *collector) GetID() string {
 	return c.id
+}
+
+func (c *collector) GetTargetCatalog() workloadmeta.AgentType {
+	return c.catalog
 }
 
 func startReadiness(ctx context.Context, stores []*reflectorStore) {

@@ -5,6 +5,7 @@
 
 //go:build podman
 
+// Package podman provides the docker collector for workloadmeta
 package podman
 
 import (
@@ -47,10 +48,12 @@ func NewCollector() (workloadmeta.CollectorProvider, error) {
 	}, nil
 }
 
+// GetFxOptions returns the FX framework options for the collector
 func GetFxOptions() fx.Option {
 	return fx.Provide(NewCollector)
 }
 
+// Start the collector for the provided workloadmeta component
 func (c *collector) Start(_ context.Context, store workloadmeta.Component) error {
 	if !config.IsFeaturePresent(config.Podman) {
 		return dderrors.NewDisabled(componentName, "Podman not detected")
@@ -100,6 +103,14 @@ func (c *collector) Pull(_ context.Context) error {
 
 func (c *collector) GetID() string {
 	return c.id
+}
+
+func (c *collector) GetTargetCatalog() workloadmeta.AgentType {
+	return c.catalog
+}
+
+func (c *collector) GetTargetCatalog() workloadmeta.AgentType {
+	return c.catalog
 }
 
 func convertToEvent(container *podman.Container) workloadmeta.CollectorEvent {

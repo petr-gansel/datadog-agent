@@ -11,7 +11,6 @@ import (
 
 	"github.com/DataDog/datadog-agent/cmd/agent/common"
 	"github.com/DataDog/datadog-agent/comp/core/log"
-	"github.com/DataDog/datadog-agent/comp/core/workloadmeta"
 	forwarder "github.com/DataDog/datadog-agent/comp/forwarder/defaultforwarder"
 	"github.com/DataDog/datadog-agent/pkg/aggregator"
 	"github.com/DataDog/datadog-agent/pkg/collector"
@@ -112,8 +111,7 @@ func diagnoseChecksInCLIProcess(diagCfg diagnosis.Config) []diagnosis.Diagnosis 
 	aggregator.InitAndStartAgentDemultiplexer(log, forwarder, opts, hostnameDetected)
 
 	// TODO(components): this should rely on workloadmeta component and not global state
-	wmeta := workloadmeta.GetGlobalStore()
-	common.LoadComponents(context.Background(), aggregator.GetSenderManager(), wmeta, pkgconfig.Datadog.GetString("confd_path"))
+	common.LoadComponents(context.Background(), aggregator.GetSenderManager(), pkgconfig.Datadog.GetString("confd_path"))
 	common.AC.LoadAndRun(context.Background())
 
 	// Create the CheckScheduler, but do not attach it to

@@ -3,6 +3,7 @@
 // This product includes software developed at Datadog (https://www.datadoghq.com/).
 // Copyright 2016-present Datadog, Inc.
 
+//nolint:revive // var-naming on package name disabled
 package process_collector
 
 import (
@@ -104,21 +105,23 @@ func (s *stream) Recv() (interface{}, error) {
 
 type streamHandler struct {
 	port int
-	config.Config
+	config.ConfigReader
 }
 
+// NewCollector returns a remote process collector for workloadmeta if any
 func NewCollector() (workloadmeta.CollectorProvider, error) {
 	return workloadmeta.CollectorProvider{
 		Collector: &remote.GenericCollector{
 			CollectorID: collectorID,
 			// TODO(components): make sure StreamHandler uses the config component not pkg/config
-			StreamHandler: &streamHandler{Config: config.Datadog},
+			StreamHandler: &streamHandler{ConfigReader: config.Datadog},
 			Catalog:       workloadmeta.Remote,
 			Insecure:      true, // wlm extractor currently does not support TLS
 		},
 	}, nil
 }
 
+// GetFxOptions returns the FX framework options for the collector
 func GetFxOptions() fx.Option {
 	return fx.Provide(NewCollector)
 }
@@ -130,7 +133,7 @@ func init() {
 
 func (s *streamHandler) Port() int {
 	if s.port == 0 {
-		return s.Config.GetInt("process_config.language_detection.grpc_port")
+		return s.ConfigReader.GetInt("process_config.language_detection.grpc_port")
 	}
 	// for test purposes
 	return s.port
@@ -140,7 +143,7 @@ func (s *streamHandler) IsEnabled() bool {
 	if flavor.GetFlavor() != flavor.DefaultAgent {
 		return false
 	}
-	return s.Config.GetBool("language_detection.enabled")
+	return s.ConfigReader.GetBool("language_detection.enabled")
 }
 
 func (s *streamHandler) NewClient(cc grpc.ClientConnInterface) remote.RemoteGrpcClient {
