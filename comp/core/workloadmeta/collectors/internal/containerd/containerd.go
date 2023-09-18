@@ -105,6 +105,7 @@ type collector struct {
 	scanOptions sbom.ScanOptions // nolint: unused
 }
 
+// NewCollector returns a new containerd collector provider and an error
 func NewCollector() (workloadmeta.CollectorProvider, error) {
 	return workloadmeta.CollectorProvider{
 		Collector: &collector{
@@ -173,6 +174,7 @@ func (c *collector) Pull(ctx context.Context) error {
 func (c *collector) GetID() string {
 	return c.id
 }
+
 func (c *collector) GetTargetCatalog() workloadmeta.AgentType {
 	return c.catalog
 }
