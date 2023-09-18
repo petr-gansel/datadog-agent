@@ -16,6 +16,7 @@ import (
 
 	"github.com/containerd/containerd"
 	containerdevents "github.com/containerd/containerd/events"
+	"go.uber.org/fx"
 
 	"github.com/DataDog/datadog-agent/comp/core/workloadmeta"
 	"github.com/DataDog/datadog-agent/pkg/config"
