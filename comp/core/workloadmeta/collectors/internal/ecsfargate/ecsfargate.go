@@ -34,6 +34,7 @@ type collector struct {
 	seen    map[workloadmeta.EntityID]struct{}
 }
 
+// NewCollector returns a new ecsfargate collector provider and an error
 func NewCollector() (workloadmeta.CollectorProvider, error) {
 	return workloadmeta.CollectorProvider{
 		Collector: &collector{
