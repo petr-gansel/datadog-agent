@@ -5,6 +5,7 @@
 
 //go:build kubeapiserver
 
+// kubeapiserver collector package
 package kubeapiserver
 
 import (

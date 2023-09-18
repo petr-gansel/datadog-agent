@@ -5,6 +5,7 @@
 
 //go:build docker
 
+// docker collector package
 package docker
 
 import (

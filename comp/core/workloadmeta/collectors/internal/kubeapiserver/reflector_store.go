@@ -22,8 +22,8 @@ type objectParser interface {
 	Parse(obj interface{}) workloadmeta.Entity
 }
 
-// entityUid glue together a WLM Entity and a Kube UID
-type entityUid struct {
+// entityUID glue together a WLM Entity and a Kube UID
+type entityUID struct {
 	entity workloadmeta.Entity
 	uid    types.UID
 }
@@ -71,11 +71,11 @@ func (r *reflectorStore) Update(obj interface{}) error {
 // Replace diffs the given list with the contents of the workloadmeta store
 // (through r.seen), and updates and deletes the necessary objects.
 func (r *reflectorStore) Replace(list []interface{}, _ string) error {
-	entities := make([]entityUid, 0, len(list))
+	entities := make([]entityUID, 0, len(list))
 
 	for _, obj := range list {
 		metaObj := obj.(metav1.Object)
-		entities = append(entities, entityUid{r.parser.Parse(obj), metaObj.GetUID()})
+		entities = append(entities, entityUID{r.parser.Parse(obj), metaObj.GetUID()})
 	}
 
 	r.mu.Lock()

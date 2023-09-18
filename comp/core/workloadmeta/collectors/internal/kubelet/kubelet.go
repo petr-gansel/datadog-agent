@@ -127,7 +127,7 @@ func (c *collector) parsePods(pods []*kubelet.Pod) []workloadmeta.CollectorEvent
 		containerSpecs = append(containerSpecs, pod.Spec.InitContainers...)
 		containerSpecs = append(containerSpecs, pod.Spec.Containers...)
 
-		podId := workloadmeta.EntityID{
+		podID := workloadmeta.EntityID{
 			Kind: workloadmeta.KindKubernetesPod,
 			ID:   podMeta.UID,
 		}
@@ -136,7 +136,7 @@ func (c *collector) parsePods(pods []*kubelet.Pod) []workloadmeta.CollectorEvent
 			pod,
 			containerSpecs,
 			pod.Status.GetAllContainers(),
-			&podId,
+			&podID,
 		)
 
 		podOwners := pod.Owners()
@@ -152,7 +152,7 @@ func (c *collector) parsePods(pods []*kubelet.Pod) []workloadmeta.CollectorEvent
 		PodSecurityContext := extractPodSecurityContext(&pod.Spec)
 
 		entity := &workloadmeta.KubernetesPod{
-			EntityID: podId,
+			EntityID: podID,
 			EntityMeta: workloadmeta.EntityMeta{
 				Name:        podMeta.Name,
 				Namespace:   podMeta.Namespace,

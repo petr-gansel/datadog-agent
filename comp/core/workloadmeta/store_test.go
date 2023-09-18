@@ -865,9 +865,8 @@ func TestListProcessesWithFilter(t *testing.T) {
 	retrievedProcesses := s.ListProcessesWithFilter(func(p *Process) bool {
 		if p.Language.Name == languagemodels.Java {
 			return true
-		} else {
-			return false
 		}
+		return false
 	})
 
 	assert.DeepEqual(t, []*Process{javaProcess}, retrievedProcesses)

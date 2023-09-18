@@ -3,6 +3,7 @@
 // This product includes software developed at Datadog (https://www.datadoghq.com/).
 // Copyright 2016-present Datadog, Inc.
 
+// remote generic collector package
 package remote
 
 import (
@@ -32,16 +33,19 @@ const (
 
 var errWorkloadmetaStreamNotStarted = errors.New("workloadmeta stream not started")
 
+// RemoteGrpcClient interface to stream entities via grpc
 type RemoteGrpcClient interface {
 	// StreamEntites establishes the stream between the client and the remote gRPC server.
 	StreamEntities(ctx context.Context, opts ...grpc.CallOption) (Stream, error)
 }
 
+// Stream interface for gRPC server
 type Stream interface {
 	// Recv returns a response of the gRPC server
 	Recv() (interface{}, error)
 }
 
+// StreamHandler interface for stream handling
 type StreamHandler interface {
 	// Port returns the targeted port
 	Port() int
@@ -122,6 +126,7 @@ func (c *GenericCollector) Start(ctx context.Context, store workloadmeta.Compone
 	return nil
 }
 
+// Pull from generic collector, receives context parameter
 func (c *GenericCollector) Pull(context.Context) error {
 	return nil
 }
@@ -168,6 +173,7 @@ func (c *GenericCollector) startWorkloadmetaStream(maxElapsed time.Duration) err
 	}, expBackoff)
 }
 
+// Run will run the generic collector streaming loop
 func (c *GenericCollector) Run() {
 	for {
 		select {
