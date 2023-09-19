@@ -62,8 +62,12 @@
     - chmod 0744 /tmp/system-probe/system-probe /tmp/system-probe/clang-bpf /tmp/system-probe/llc-bpf
     - git config --global user.name 'bits@datadoghq.com'
     - git config --global user.email package@datadoghq.com
+    - $S3_CP_CMD s3://${S3_OMNIBUS_CACHE_BUCKET}/builds/${CI_JOB_NAME_SLUG} ${OMNIBUS_GIT_CACHE_BUNDLE_PATH} || true
+    - if [ -f ${OMNIBUS_GIT_CACHE_BUNDLE_PATH} ]; then git clone --mirror ${OMNIBUS_GIT_CACHE_BUNDLE_PATH} ${OMNIBUS_GIT_CACHE_DIR}/opt/datadog-agent/ ; fi
     - inv -e agent.omnibus-build --release-version "$RELEASE_VERSION" --major-version "$AGENT_MAJOR_VERSION" --python-runtimes "$PYTHON_RUNTIMES" --base-dir $OMNIBUS_BASE_DIR ${USE_S3_CACHING} --skip-deps --go-mod-cache="$GOPATH/pkg/mod" --system-probe-bin=/tmp/system-probe ${FLAVOR:+--flavor $FLAVOR}
     - ls -la $OMNIBUS_PACKAGE_DIR
+    - git -C ${OMNIBUS_GIT_CACHE_DIR}/opt/datadog-agent bundle create ${OMNIBUS_GIT_CACHE_BUNDLE_PATH} --tags
+    - $S3_CP_CMD ${OMNIBUS_GIT_CACHE_BUNDLE_PATH} s3://${S3_OMNIBUS_CACHE_BUCKET}/builds/${CI_JOB_NAME_SLUG}
     - $S3_CP_CMD $OMNIBUS_PACKAGE_DIR/datadog${FLAVOR:+-$FLAVOR}-agent_*_${PACKAGE_ARCH}.deb $S3_ARTIFACTS_URI/$DESTINATION_DEB
     - $S3_CP_CMD $OMNIBUS_PACKAGE_DIR/datadog${FLAVOR:+-$FLAVOR}-agent-dbg_*_${PACKAGE_ARCH}.deb $S3_ARTIFACTS_URI/$DESTINATION_DBG_DEB
     - !reference [.upload_sbom_artifacts]
