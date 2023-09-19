@@ -5,7 +5,7 @@
 
 //go:build kubeapiserver && kubelet
 
-// kubemetadata collector package
+// Package kubemetadata collector
 package kubemetadata
 
 import (

@@ -5,7 +5,7 @@
 
 //go:build docker
 
-// ecsfargate collector package
+// Package ecsfargate collector
 package ecsfargate
 
 import (

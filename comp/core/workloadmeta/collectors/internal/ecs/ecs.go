@@ -5,6 +5,7 @@
 
 //go:build docker
 
+// Package ecs collector
 package ecs
 
 import (
