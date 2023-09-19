@@ -450,7 +450,7 @@ const (
 	SeccompProfileTypeLocalhost      SeccompProfileType = "Localhost"
 )
 
-// SeccompProfileSpec contains fields for unmarshalling a Pod.Spec.Containers.SecurityContext.SeccompProfile
+// SeccompProfile contains fields for unmarshalling a Pod.Spec.Containers.SecurityContext.SeccompProfile
 type SeccompProfile struct {
 	Type             SeccompProfileType
 	LocalhostProfile string

@@ -5,7 +5,7 @@
 
 //go:build kubeapiserver && kubelet
 
-// Package kubemetadata collector
+// Package kubemetadata provides the kubemetadata colletor for workloadmeta
 package kubemetadata
 
 import (

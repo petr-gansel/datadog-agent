@@ -5,7 +5,7 @@
 
 //go:build docker
 
-// Package ecs collector
+// Package ecs provides the ecs colletor for workloadmeta
 package ecs
 
 import (

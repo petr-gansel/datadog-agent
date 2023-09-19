@@ -5,7 +5,7 @@
 
 //go:build docker
 
-// Package docker collector
+// Package docker provides the docker workloadmeta collector
 package docker
 
 import (

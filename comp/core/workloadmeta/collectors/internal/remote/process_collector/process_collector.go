@@ -146,7 +146,7 @@ func (s *streamHandler) IsEnabled() bool {
 	return s.ConfigReader.GetBool("language_detection.enabled")
 }
 
-func (s *streamHandler) NewClient(cc grpc.ClientConnInterface) remote.RemoteGrpcClient {
+func (s *streamHandler) NewClient(cc grpc.ClientConnInterface) remote.GrpcClient {
 	log.Debug("creating grpc client")
 	return &client{cl: pbgo.NewProcessEntityStreamClient(cc), parentCollector: s}
 }
