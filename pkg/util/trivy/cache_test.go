@@ -14,7 +14,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DataDog/datadog-agent/comp/core/config"
+	"github.com/DataDog/datadog-agent/comp/core/log"
 	"github.com/DataDog/datadog-agent/comp/core/workloadmeta"
+	"github.com/DataDog/datadog-agent/pkg/util/fxutil"
+
 	"github.com/aquasecurity/trivy/pkg/fanal/types"
 	"github.com/stretchr/testify/require"
 )
@@ -227,7 +231,6 @@ func TestCustomBoltCache_GarbageCollector(t *testing.T) {
 		config.MockModule,
 		fx.Supply(context.Background()),
 		fx.Supply(workloadmeta.NewParams()),
-		collectors.GetCatalog(),
 		workloadmeta.MockModuleV2,
 	))
 
@@ -253,7 +256,7 @@ func TestCustomBoltCache_GarbageCollector(t *testing.T) {
 		},
 	}
 
-	globalStore.Reset([]workloadmeta.Entity{image1, image2, image3}, workloadmeta.SourceAll)
+	workloadmetaStore.Reset([]workloadmeta.Entity{image1, image2, image3}, workloadmeta.SourceAll)
 
 	cache, cacheCleaner, err := NewCustomBoltCache(t.TempDir(), defaultCacheSize, defaultDiskSize)
 	require.NoError(t, err)
@@ -315,7 +318,7 @@ func TestCustomBoltCache_GarbageCollector(t *testing.T) {
 	require.Equal(t, newTestBlobInfo(), blob)
 
 	// Remove the second image from the workloadmeta
-	globalStore.Reset([]workloadmeta.Entity{image1}, workloadmeta.SourceAll)
+	workloadmetaStore.Reset([]workloadmeta.Entity{image1}, workloadmeta.SourceAll)
 
 	// Wait for the garbage collector to clean up the unused artifact
 	time.Sleep(time.Second)
