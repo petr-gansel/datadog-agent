@@ -25,3 +25,10 @@ var Bundle = fxutil.Bundle(
 	forwarder.Module,
 	aggregator.Module,
 )
+
+// MockBundle defines the fx options for mock versions of everything in this bundle.
+var MockBundle = fxutil.Bundle(
+	sender.Module,
+	forwarder.MockModule,
+	aggregator.MockModule,
+)

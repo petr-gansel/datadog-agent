@@ -8,6 +8,7 @@ package ndmtmp
 import (
 	"testing"
 
+	"github.com/DataDog/datadog-agent/comp/core/log"
 	"github.com/DataDog/datadog-agent/comp/ndmtmp/aggregator"
 	"github.com/DataDog/datadog-agent/comp/ndmtmp/forwarder"
 	"github.com/DataDog/datadog-agent/comp/ndmtmp/sender"
@@ -27,5 +28,16 @@ func TestBundleDependencies(t *testing.T) {
 		fx.Provide(func() *ddagg.AgentDemultiplexer {
 			return &ddagg.AgentDemultiplexer{}
 		}),
+	))
+}
+
+func TestMockBundleDependencies(t *testing.T) {
+	require.NoError(t, fx.ValidateApp(
+		log.MockModule,
+		fx.Supply(fx.Annotate(t, fx.As(new(testing.TB)))),
+		fx.Invoke(func(forwarder.Component) {}),
+		fx.Invoke(func(sender.Component) {}),
+		fx.Invoke(func(aggregator.Component) {}),
+		MockBundle,
 	))
 }
