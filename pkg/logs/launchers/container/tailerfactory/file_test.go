@@ -253,7 +253,7 @@ func TestMakeK8sSource_pod_not_found(t *testing.T) {
 
 	workloadmetaStore := fxutil.Test[workloadmeta.Component](t, fx.Options(
 		log.MockModule,
-		config.MockModule,
+		compConfig.MockModule,
 		fx.Supply(context.Background()),
 		fx.Supply(workloadmeta.NewParams()),
 		workloadmeta.MockModuleV2,

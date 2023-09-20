@@ -21,6 +21,7 @@ import (
 
 	"github.com/aquasecurity/trivy/pkg/fanal/types"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/fx"
 )
 
 var (
