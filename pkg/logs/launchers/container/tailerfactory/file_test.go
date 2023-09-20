@@ -251,7 +251,7 @@ func TestMakeK8sSource_pod_not_found(t *testing.T) {
 	require.NoError(t, os.MkdirAll(filepath.Dir(p), 0o777))
 	require.NoError(t, os.WriteFile(p, []byte("{}"), 0o666))
 
-	workloadmetaStore := fxutil.Test[workloadmeta.Component](t, fx.Options(
+	workloadmetaStore := fxutil.Test[workloadmeta.Mock](t, fx.Options(
 		log.MockModule,
 		compConfig.MockModule,
 		fx.Supply(context.Background()),
