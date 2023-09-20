@@ -21,8 +21,9 @@ func newMock(conf *NetflowConfig) Component {
 var MockModule = fxutil.Component(
 	fx.Provide(newMock),
 	fx.Supply(&NetflowConfig{}),
+	// This decorate means that if you `fx.Replace(&NetflowConfig{...})` the
+	// config you provide will automatically have SetDefaults() called.
 	fx.Decorate(
-		// Allow tests to inject incomplete config and have defaults set automatically
 		func(conf *NetflowConfig) (*NetflowConfig, error) {
 			return conf, conf.SetDefaults("default")
 		},
