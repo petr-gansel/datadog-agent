@@ -324,6 +324,12 @@ func (e *RuleEngine) RuleMatch(rule *rules.Rule, event eval.Event) bool {
 		return false
 	}
 
+	for _, action := range rule.Definition.Actions {
+		if action.RefreshUserCache != nil {
+			e.probe.GetResolvers().UserGroupResolver.RefreshCache(ev.ContainerContext.ID)
+		}
+	}
+
 	// ensure that all the fields are resolved before sending
 	ev.FieldHandlers.ResolveContainerID(ev, ev.ContainerContext)
 	ev.FieldHandlers.ResolveContainerTags(ev, ev.ContainerContext)
