@@ -412,6 +412,8 @@ func (m *SecurityProfileManager) OnCGroupDeletedEvent(workload *cgroupModel.Cach
 func (m *SecurityProfileManager) ShouldDeleteProfile(profile *SecurityProfile) {
 	m.profilesLock.Lock()
 	defer m.profilesLock.Unlock()
+	m.pendingCacheLock.Lock()
+	defer m.pendingCacheLock.Unlock()
 	profile.Lock()
 	defer profile.Unlock()
 
@@ -441,8 +443,6 @@ func (m *SecurityProfileManager) ShouldDeleteProfile(profile *SecurityProfile) {
 	}
 
 	// add profile in cache
-	m.pendingCacheLock.Lock()
-	defer m.pendingCacheLock.Unlock()
 	m.pendingCache.Add(profile.selector, profile)
 }
 
@@ -463,6 +463,9 @@ func (m *SecurityProfileManager) OnNewProfileEvent(selector cgroupModel.Workload
 		return
 	}
 
+	m.pendingCacheLock.Lock()
+	defer m.pendingCacheLock.Unlock()
+
 	profile.Lock()
 	defer profile.Unlock()
 	profile.loadedInKernel = false
@@ -479,8 +482,6 @@ func (m *SecurityProfileManager) OnNewProfileEvent(selector cgroupModel.Workload
 
 	if !ok {
 		// insert in cache and leave
-		m.pendingCacheLock.Lock()
-		defer m.pendingCacheLock.Unlock()
 		m.pendingCache.Add(selector, profile)
 		return
 	}
