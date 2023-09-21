@@ -3967,7 +3967,6 @@ api_key:
     ## Valid values are basic, normal, detailed.
     #
     # verbosity: normal
-{{end -}}
 {{- if (eq .OS "windows")}}
 #####################################################
 ## Datadog Agent Manager System Tray Configuration ##
@@ -3983,3 +3982,21 @@ api_key:
   #
   # log_file: <TRAY_LOG_FILE_PATH>
 {{end -}}
+{{end -}}
+
+
+{{- if .APMInjection -}}
+##############################################
+## Datadog APM Auto-injection Configuration ##
+##############################################
+
+## @param injection_controller_config - custom object
+## This section configures the Datadog APM Auto Injection controller
+injection_controller_config:
+  enabled: false
+
+## @param service_configs - custom object - optional
+# service_configs:
+  # - conditions
+  #   configuration:
+{{end}}

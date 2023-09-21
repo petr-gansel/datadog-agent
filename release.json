@@ -14,7 +14,11 @@
         "WINDOWS_DDNPM_DRIVER": "release-signed",
         "WINDOWS_DDNPM_VERSION": "2.5.2",
         "WINDOWS_DDNPM_SHASUM": "57a53c23e0b40da1e75094058498f9982dc80f6aa7feb5a1c8aece6e08292840",
-        "SECURITY_AGENT_POLICIES_VERSION": "master"
+        "SECURITY_AGENT_POLICIES_VERSION": "master",
+        "WINDOWS_APMINJECT_COMMENT": "The WINDOWS_APMINJECT entries below should NOT be added to the release targets",
+        "WINDOWS_APMINJECT_MODULE": "release-signed",
+        "WINDOWS_APMINJECT_VERSION": "1.0.0",
+        "WINDOWS_APMINJECT_SHASUM": "9d99807417f58209a728f7bdc47ab28d8a3a06a5bf97466a8c6a18f0ebbd043f"
     },
     "nightly-a7": {
         "INTEGRATIONS_CORE_VERSION": "master",
@@ -26,7 +30,11 @@
         "WINDOWS_DDNPM_DRIVER": "release-signed",
         "WINDOWS_DDNPM_VERSION": "2.5.2",
         "WINDOWS_DDNPM_SHASUM": "57a53c23e0b40da1e75094058498f9982dc80f6aa7feb5a1c8aece6e08292840",
-        "SECURITY_AGENT_POLICIES_VERSION": "master"
+        "SECURITY_AGENT_POLICIES_VERSION": "master",
+        "WINDOWS_APMINJECT_COMMENT": "The WINDOWS_APMINJECT entries below should NOT be added to the release targets",
+        "WINDOWS_APMINJECT_MODULE": "release-signed",
+        "WINDOWS_APMINJECT_VERSION": "1.0.0",
+        "WINDOWS_APMINJECT_SHASUM": "9d99807417f58209a728f7bdc47ab28d8a3a06a5bf97466a8c6a18f0ebbd043f"
     },
     "release-a6": {
         "INTEGRATIONS_CORE_VERSION": "7.48.0-rc.2",
