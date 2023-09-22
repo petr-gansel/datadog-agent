@@ -15,7 +15,11 @@ eval $(gimme "$GOVERSION")
 ## Start docker
 systemctl start docker
 ## Load docker images
+START=`date +%s`
 [ -d $KITCHEN_DOCKERS ] && find $KITCHEN_DOCKERS -maxdepth 1 -type f -exec docker load -i {} \;
+END=`date +%s`
+echo "Docker load time:"
+echo `expr $END - $START`
 
 # VM provisioning end !
 
