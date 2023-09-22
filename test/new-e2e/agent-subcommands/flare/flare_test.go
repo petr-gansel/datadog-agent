@@ -14,6 +14,7 @@ import (
 	"github.com/DataDog/datadog-agent/test/fakeintake/client/flare"
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/utils/e2e"
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/utils/e2e/client"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/utils/e2e/params"
 	"github.com/DataDog/test-infra-definitions/components/datadog/agentparams"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +24,7 @@ type commandFlareSuite struct {
 }
 
 func TestFlareSuite(t *testing.T) {
-	e2e.Run(t, &commandFlareSuite{}, e2e.FakeIntakeStackDef(nil))
+	e2e.Run(t, &commandFlareSuite{}, e2e.FakeIntakeStackDef(nil), params.WithDevMode())
 }
 
 func requestAgentFlareAndFetchFromFakeIntake(v *commandFlareSuite, flareArgs ...client.AgentArgsOption) flare.Flare {
@@ -77,8 +78,8 @@ func (v *commandFlareSuite) TestFlareWithAllConfiguration() {
 
 	withFiles := []agentparams.Option{
 		// TODO: use dedicated functions when https://github.com/DataDog/test-infra-definitions/pull/309 is merged
-		agentparams.WithFile("/etc/datadog-agent/system-probe.yaml", string(systemProbeConfiguration), useSudo),
-		agentparams.WithFile("/etc/datadog-agent/security-agent.yaml", string(securityAgentConfiguration), useSudo),
+		agentparams.WithSystemProbeConfig(string(systemProbeConfiguration)),
+		agentparams.WithSecurityAgentConfig(string(securityAgentConfiguration)),
 		agentparams.WithFile(confdPath+"test.yaml", "dummy content", useSudo),
 		agentparams.WithFile(confdPath+"test.yml", "dummy content", useSudo),
 		agentparams.WithFile(confdPath+"test.yml.test", "dummy content", useSudo),
