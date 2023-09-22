@@ -679,6 +679,7 @@ def omnibus_build(
         remote_cache_name = os.environ.get('CI_JOB_NAME_SLUG')
         use_remote_cache = remote_cache_name is not None
         if use_remote_cache:
+            cache_head = ctx.run(f"git -C {omnibus_cache_dir}/opt/datadog-agent rev-parse HEAD").stdout
             git_cache_url = f"s3://{os.environ['S3_OMNIBUS_CACHE_BUCKET']}/builds/{remote_cache_name}"
             bundle_path = "/tmp/omnibus-git-cache-bundle"
             with timed(quiet=True) as restore_cache:
@@ -699,8 +700,9 @@ def omnibus_build(
 
     if use_omnibus_git_cache and use_remote_cache:
         with timed(quiet=True) as update_cache:
-            ctx.run(f"git -C {omnibus_cache_dir}/opt/datadog-agent bundle create {bundle_path} --tags")
-            ctx.run(f"aws s3 cp --only-show-errors {bundle_path} {git_cache_url}")
+            if ctx.run(f"git -C {omnibus_cache_dir}/opt/datadog-agent rev-parse HEAD").stdout != cache_head:
+                ctx.run(f"git -C {omnibus_cache_dir}/opt/datadog-agent bundle create {bundle_path} --tags")
+                ctx.run(f"aws s3 cp --only-show-errors {bundle_path} {git_cache_url}")
 
     # Delete the temporary pip.conf file once the build is done
     os.remove(pip_config_file)
