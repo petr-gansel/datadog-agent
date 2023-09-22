@@ -19,6 +19,7 @@ import (
 	serverlessLog "github.com/DataDog/datadog-agent/pkg/serverless/logs"
 	serverlessMetrics "github.com/DataDog/datadog-agent/pkg/serverless/metrics"
 	"github.com/DataDog/datadog-agent/pkg/serverless/trace/inferredspan"
+	"github.com/DataDog/datadog-agent/pkg/serverless/trace/propagation"
 	"github.com/DataDog/datadog-agent/pkg/serverless/trigger"
 	"github.com/DataDog/datadog-agent/pkg/trace/api"
 	"github.com/DataDog/datadog-agent/pkg/trace/sampler"
@@ -33,6 +34,7 @@ type LifecycleProcessor struct {
 	DetectLambdaLibrary  func() bool
 	InferredSpansEnabled bool
 	SubProcessor         InvocationSubProcessor
+	Extractors           []propagation.Extractor
 
 	requestHandler *RequestHandler
 	serviceName    string
