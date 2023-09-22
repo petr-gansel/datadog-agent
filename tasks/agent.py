@@ -679,13 +679,13 @@ def omnibus_build(
         remote_cache_name = os.environ.get('CI_JOB_NAME_SLUG')
         use_remote_cache = remote_cache_name is not None
         if use_remote_cache:
-            cache_head = ctx.run(f"git -C {omnibus_cache_dir}/opt/datadog-agent rev-parse HEAD").stdout
             git_cache_url = f"s3://{os.environ['S3_OMNIBUS_CACHE_BUCKET']}/builds/{remote_cache_name}"
             bundle_path = "/tmp/omnibus-git-cache-bundle"
             with timed(quiet=True) as restore_cache:
                 # Allow failure in case the cache was evicted
                 if ctx.run(f"aws s3 cp --only-show-errors {git_cache_url} {bundle_path}", warn=True):
                     ctx.run(f"git clone --mirror {bundle_path} {omnibus_cache_dir}/opt/datadog-agent")
+            cache_head = ctx.run(f"git -C {omnibus_cache_dir}/opt/datadog-agent rev-parse HEAD").stdout
 
     with timed(quiet=True) as omnibus_elapsed:
         omnibus_run_task(
