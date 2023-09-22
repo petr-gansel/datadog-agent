@@ -4047,7 +4047,7 @@ api_key:
   ##     version: 1
   ##     service_language: dotnet
   ##
-  ## To learn about all the available the matching conditions & configuration options, visit
+  ## To learn about all the available service matching conditions & configuration options, visit
   ## https://docs.datadoghq.com/tracing/trace_collection/library_injection_local
 
 {{end}}
