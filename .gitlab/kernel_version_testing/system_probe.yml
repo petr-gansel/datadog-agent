@@ -322,7 +322,7 @@ kernel_matrix_testing_setup_env:
     # ssh into each micro-vm and run initialization script. This script will also run the tests.
     - SHARED_DIR="/opt/kernel-version-testing"
     - set +e
-    - ssh -o StrictHostKeyChecking=no -i $AWS_EC2_SSH_KEY_FILE ubuntu@$INSTANCE_IP "/tmp/run-once.sh && [ $(find . -name /tmp/*tar.gz | wc -l) -ne \"0\" ] && mv /tmp/*.tar.gz ${SHARED_DIR} && tar xzf ${SHARED_DIR}/dependencies-${ARCH}.tar.gz -C ${SHARED_DIR} && tar xzf ${SHARED_DIR}/tests-${ARCH}.tar.gz -C ${SHARED_DIR} && tar xzf ${SHARED_DIR}/btfs-${ARCH}.tar.gz -C ${SHARED_DIR}"
+    - ssh -o StrictHostKeyChecking=no -i $AWS_EC2_SSH_KEY_FILE ubuntu@$INSTANCE_IP "/tmp/run-once.sh && ls -la /tmp && ls -la /opt/kernel-version-testing && [ $(find . -name /tmp/*tar.gz | wc -l) -ne \"0\" ] && mv /tmp/*.tar.gz ${SHARED_DIR} && tar xzf ${SHARED_DIR}/dependencies-${ARCH}.tar.gz -C ${SHARED_DIR} && tar xzf ${SHARED_DIR}/tests-${ARCH}.tar.gz -C ${SHARED_DIR} && tar xzf ${SHARED_DIR}/btfs-${ARCH}.tar.gz -C ${SHARED_DIR}"
     - set -e
     - ssh -o StrictHostKeyChecking=no -i $AWS_EC2_SSH_KEY_FILE ubuntu@$INSTANCE_IP "ssh -o StrictHostKeyChecking=no -i /home/kernel-version-testing/ddvm_rsa root@${MICRO_VM_IP} 'cp /opt/kernel-version-testing/micro-vm-init.sh / && chmod +x /micro-vm-init.sh && /micro-vm-init.sh ${GO_VERSION} ${RETRY} ${ARCH}'"
     - ssh -o StrictHostKeyChecking=no -i $AWS_EC2_SSH_KEY_FILE ubuntu@$INSTANCE_IP "scp -o StrictHostKeyChecking=no -i /home/kernel-version-testing/ddvm_rsa root@${MICRO_VM_IP}:/ci-visibility/junit.tar.gz /home/ubuntu/junit.tar.gz"
