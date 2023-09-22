@@ -683,7 +683,7 @@ def omnibus_build(
             bundle_path = "/tmp/omnibus-git-cache-bundle"
             with timed(quiet=True) as restore_cache:
                 # Allow failure in case the cache was evicted
-                if ctx.run(f"aws s3 cp {git_cache_url} {bundle_path}", warn=True):
+                if ctx.run(f"aws s3 cp --only-show-errors {git_cache_url} {bundle_path}", warn=True):
                     ctx.run(f"git clone --mirror {bundle_path} {omnibus_cache_dir}/opt/datadog-agent")
 
     with timed(quiet=True) as omnibus_elapsed:
@@ -700,7 +700,7 @@ def omnibus_build(
     if use_omnibus_git_cache and use_remote_cache:
         with timed(quiet=True) as update_cache:
             ctx.run(f"git -C {omnibus_cache_dir}/opt/datadog-agent bundle create {bundle_path} --tags")
-            ctx.run(f"aws s3 cp {bundle_path} {git_cache_url}")
+            ctx.run(f"aws s3 cp --only-show-errors {bundle_path} {git_cache_url}")
 
     # Delete the temporary pip.conf file once the build is done
     os.remove(pip_config_file)
