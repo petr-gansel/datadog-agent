@@ -597,6 +597,13 @@ def generate_syscall_table(ctx):
         "pkg/security/secl/model/syscalls_linux_arm64.go",
         "pkg/security/secl/model/syscalls_string_linux_arm64.go",
     )
+    single_run(
+        ctx,
+        f"https://raw.githubusercontent.com/torvalds/linux/v6.1/arch/powerpc/kernel/syscalls/syscall.tbl",
+        "pkg/security/secl/model/syscalls_linux_ppc64le.go",
+        "pkg/security/secl/model/syscalls_string_linux_ppc64le.go",
+        abis="common,nospu,64",
+    )
 
 
 @task
