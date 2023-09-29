@@ -2,10 +2,10 @@
 # Preparation stage: layout and chmods #
 ########################################
 
-FROM ubuntu:22.04 as builder
+FROM ubuntu:20.04 as builder
 ARG TARGETARCH
-LABEL baseimage.os "ubuntu jammy LTS"
-LABEL baseimage.name "ubuntu:22.04"
+LABEL baseimage.os "ubuntu focal LTS"
+LABEL baseimage.name "ubuntu:20.04"
 # Can be used by Dependabot
 LABEL org.opencontainers.image.source "https://github.com/DataDog/datadog-agent"
 
@@ -37,9 +37,9 @@ RUN gcc -pipe -Wall -Wextra -O2 -shared -fPIC -Wl,--version-script=/tmp/nosys.sy
 # Actual docker image construction #
 ####################################
 
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 
-LABEL maintainer "Datadog <package@datadoghq.com>"
+LABEL maintainer "Petr Gansel <petr.gansel@sg-consulting.cz>"
 
 ARG CIBUILD
 # NOTE about APT mirrorlists:

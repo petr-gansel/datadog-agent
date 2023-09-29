@@ -20,24 +20,27 @@ static void cleanup_fd(int *dirfd) {
     }
 }
 
-static bool test_faccessat2(void) {
-    int dirfd __attribute__((__cleanup__(cleanup_fd))) = TEMP_FAILURE_RETRY(open("/", O_CLOEXEC | O_DIRECTORY));
-    if (dirfd < 0)
-        perror("failed to open \"/\"");
-
-    long rc = syscall(SYS_faccessat2, dirfd, "/", F_OK, 0);
-
-    // Success or not implemented
-    if (rc == 0 || errno == ENOSYS)
-        return true;
-
-    // Blocked by docker seccomp profile
-    if (rc < 0 && errno == EPERM)
-        return false;
-
-    perror("failed to faccessat2");
-    return true;
-}
+// Can't get rid of it on ppc64le,  false 
+//
+//static bool test_faccessat2(void) {
+//    int dirfd __attribute__((__cleanup__(cleanup_fd))) = TEMP_FAILURE_RETRY(open("/", O_CLOEXEC | O_DIRECTORY));
+//    if (dirfd < 0)
+//        perror("failed to open \"/\"");
+//
+//
+//    long rc = syscall(SYS_faccessat2, dirfd, "/", F_OK, 0);
+//
+//    // Success or not implemented
+//    if (rc == 0 || errno == ENOSYS)
+//        return true;
+//
+//    // Blocked by docker seccomp profile
+//    if (rc < 0 && errno == EPERM)
+//        return false;
+//
+//    perror("failed to faccessat2");
+//    return true;
+//}
 
 static bool test_clone3(void) {
     int child_pidfd;
@@ -78,7 +81,9 @@ static void cleanup_seccomp_ctx(scmp_filter_ctx *ctx) {
 }
 
 __attribute__((constructor, visibility("hidden"))) void nosys_init(void) {
-    bool faccessat2_is_usable = test_faccessat2();
+// Can't get rid of it on ppc64le,  false 
+//    bool faccessat2_is_usable = test_faccessat2();
+    bool faccessat2_is_usable = false;
     bool clone3_is_usable = test_clone3();
 
     if (faccessat2_is_usable && clone3_is_usable)

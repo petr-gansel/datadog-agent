@@ -1,6 +1,6 @@
-FROM ubuntu:22.04 AS baseimage
-LABEL baseimage.os "ubuntu jammy LTS"
-LABEL baseimage.name "ubuntu:22.04"
+FROM ubuntu:20.04 AS baseimage
+LABEL baseimage.os "ubuntu focal LTS"
+LABEL baseimage.name "ubuntu:20.04"
 # Can be used by Dependabot
 LABEL org.opencontainers.image.source "https://github.com/DataDog/datadog-agent"
 
@@ -104,7 +104,7 @@ COPY install_info etc/datadog-agent/
 ######################################
 
 FROM baseimage AS release
-LABEL maintainer "Datadog <package@datadoghq.com>"
+LABEL maintainer "Petr Gansel <petr.gansel@sg-consulting.cz>"
 ARG WITH_JMX
 ARG PYTHON_VERSION
 ENV DOCKER_DD_AGENT=true \
