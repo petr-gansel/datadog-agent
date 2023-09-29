@@ -599,10 +599,9 @@ def generate_syscall_table(ctx):
     )
     single_run(
         ctx,
-        f"https://raw.githubusercontent.com/torvalds/linux/v6.1/arch/powerpc/kernel/syscalls/syscall.tbl",
+        f"https://raw.githubusercontent.com/torvalds/linux/v4.18/arch/powerpc/include/uapi/asm/unistd.h",
         "pkg/security/secl/model/syscalls_linux_ppc64le.go",
         "pkg/security/secl/model/syscalls_string_linux_ppc64le.go",
-        abis="common,nospu,64",
     )
 
 
