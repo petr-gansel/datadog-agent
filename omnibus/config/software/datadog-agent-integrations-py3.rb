@@ -105,6 +105,13 @@ if arm?
   blacklist_packages.push(/^pymqi==/)
 end
 
+if ppc?
+  # This doesn't build on PPC
+  blacklist_folders.push('ibm_ace')
+  blacklist_folders.push('ibm_mq')
+  blacklist_packages.push(/^pymqi==/)
+end
+
 if redhat? && !arm?
   # RPM builds are done on CentOS 6 which is based on glibc v2.12 however newer libraries require v2.17, see:
   # https://blog.rust-lang.org/2022/08/01/Increasing-glibc-kernel-requirements.html
@@ -205,8 +212,8 @@ build do
 
     # We only have gcc 10.4.0 on linux for now
     if linux?
-      nix_build_env["CC"] = "/opt/gcc-#{gcc_version}/bin/gcc"
-      nix_build_env["CXX"] = "/opt/gcc-#{gcc_version}/bin/g++"
+      nix_build_env["CC"] = "/usr/bin/gcc"
+      nix_build_env["CXX"] = "/usr/bin/g++"
     end
 
     # Some libraries (looking at you, aerospike-client-python) need EXT_CFLAGS instead of CFLAGS.
