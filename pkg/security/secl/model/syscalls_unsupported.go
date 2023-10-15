@@ -3,7 +3,7 @@
 // This product includes software developed at Datadog (https://www.datadoghq.com/).
 // Copyright 2016-present Datadog, Inc.
 
-//go:build !linux || !(amd64 || arm64)
+//go:build !linux || !(amd64 || arm64 || ppc64le)
 // +build !linux !amd64,!arm64
 
 package model

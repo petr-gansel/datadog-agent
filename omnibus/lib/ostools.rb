@@ -29,6 +29,14 @@ def arm?()
     return ohai["kernel"]["machine"].start_with?("aarch", "arm")
 end
 
+def ppc?()
+    return ohai["kernel"]["machine"].start_with?("ppc")
+end
+
+def ppc64le?()
+    return ohai["kernel"]["machine"] == 'ppc64le'
+end
+
 def os
     case RUBY_PLATFORM
     when /linux/

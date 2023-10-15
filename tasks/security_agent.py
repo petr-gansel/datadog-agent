@@ -595,6 +595,7 @@ def generate_syscall_table(ctx):
         )
 
     linux_version = "v6.1"
+    linux_version_ppc64le = "v4.18"
     single_run(
         ctx,
         f"https://raw.githubusercontent.com/torvalds/linux/{linux_version}/arch/x86/entry/syscalls/syscall_64.tbl",
@@ -607,6 +608,12 @@ def generate_syscall_table(ctx):
         f"https://raw.githubusercontent.com/torvalds/linux/{linux_version}/include/uapi/asm-generic/unistd.h",
         "pkg/security/secl/model/syscalls_linux_arm64.go",
         "pkg/security/secl/model/syscalls_string_linux_arm64.go",
+    )
+    single_run(
+        ctx,
+        f"https://raw.githubusercontent.com/torvalds/linux/{linux_version_ppc64le}/arch/powerpc/include/uapi/asm/unistd.h",
+        "pkg/security/secl/model/syscalls_linux_ppc64le.go",
+        "pkg/security/secl/model/syscalls_string_linux_ppc64le.go",
     )
 
 

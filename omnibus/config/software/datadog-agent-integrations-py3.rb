@@ -92,6 +92,13 @@ if arm?
   blacklist_packages.push(/^pymqi==/)
 end
 
+if ppc?
+  # This doesn't build on PPC
+  blacklist_folders.push('ibm_ace')
+  blacklist_folders.push('ibm_mq')
+  blacklist_packages.push(/^pymqi==/)
+end
+
 # _64_bit checks the kernel arch.  On windows, the builder is 64 bit
 # even when doing a 32 bit build.  Do a specific check for the 32 bit
 # build
