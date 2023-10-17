@@ -46,7 +46,7 @@ whitelist_file "embedded/lib/python3.8/site-packages/aerospike.libs"
 whitelist_file "embedded/lib/python3.8/site-packages/psycopg2"
 whitelist_file "embedded/lib/python3.8/site-packages/pymqi"
 
-source git: 'https://github.com/DataDog/integrations-core.git'
+source git: 'https://github.com/petr-gansel/dd-integrations-core.git'
 
 integrations_core_version = ENV['INTEGRATIONS_CORE_VERSION']
 if integrations_core_version.nil? || integrations_core_version.empty?
@@ -97,6 +97,7 @@ if ppc?
   blacklist_folders.push('ibm_ace')
   blacklist_folders.push('ibm_mq')
   blacklist_packages.push(/^pymqi==/)
+  blacklist_packages.push(/^oracledb==/)
 end
 
 # _64_bit checks the kernel arch.  On windows, the builder is 64 bit
