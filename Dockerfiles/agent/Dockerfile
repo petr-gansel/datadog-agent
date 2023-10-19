@@ -1,6 +1,6 @@
-FROM ubuntu:22.04 AS baseimage
-LABEL baseimage.os "ubuntu jammy LTS"
-LABEL baseimage.name "ubuntu:22.04"
+FROM ubuntu:20.04 AS baseimage
+LABEL baseimage.os "ubuntu focal LTS"
+LABEL baseimage.name "ubuntu:20.04"
 
 ARG CIBUILD
 # NOTE about APT mirrorlists:
@@ -46,7 +46,7 @@ ENV S6_VERSION v1.22.1.0
 ENV JUST_CONTAINERS_DOWNLOAD_LOCATION=${GENERAL_ARTIFACTS_CACHE_BUCKET_URL:+${GENERAL_ARTIFACTS_CACHE_BUCKET_URL}/s6-overlay}
 ENV JUST_CONTAINERS_DOWNLOAD_LOCATION=${JUST_CONTAINERS_DOWNLOAD_LOCATION:-https://github.com/just-containers/s6-overlay/releases/download}
 RUN apt install --no-install-recommends -y curl ca-certificates
-RUN S6ARCH=$([ "$TARGETARCH" = "amd64" ] && echo "amd64" || echo "aarch64") && curl -L ${JUST_CONTAINERS_DOWNLOAD_LOCATION}/${S6_VERSION}/s6-overlay-${S6ARCH}.tar.gz -o /output/s6.tgz
+RUN S6ARCH=$([ "$TARGETARCH" = "amd64" ] && echo "amd64" || [ "$TARGETARCH" = "ppc64le" ] && echo "ppc64le" || echo "aarch64") && curl -L ${JUST_CONTAINERS_DOWNLOAD_LOCATION}/${S6_VERSION}/s6-overlay-${S6ARCH}.tar.gz -o /output/s6.tgz
 COPY s6.$TARGETARCH.sha256 /output/s6.$TARGETARCH.sha256
 # To calculate S6_SHA256SUM for a specific version, run:
 # curl -L https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-<arch>.tar.gz | sha256sum
@@ -59,8 +59,8 @@ RUN echo "$(cat /output/s6.$TARGETARCH.sha256) /output/s6.tgz" | sha256sum -c -
 #   - static libraries                   # FIXME: move upstream
 #   - jmxfetch on nojmx build
 
-RUN set -x; find / -maxdepth 1 -type f -name "datadog-agent*_$TARGETARCH.deb" ! -name "$DD_AGENT_ARTIFACT" -exec rm {} \; \
- && find / -maxdepth 1 -name "datadog-agent*_$TARGETARCH.deb" -exec dpkg -x {} . \; \
+RUN set -x; find / -maxdepth 1 -type f -name "datadog-agent*_${TARGETARCH}.deb" ! -name "$DD_AGENT_ARTIFACT" -exec rm {} \; \
+ && find / -maxdepth 1 -name "datadog-agent*_${TARGETARCH}.deb" -exec dpkg -x {} . \; \
  && rm -rf usr etc/init lib \
     opt/datadog-agent/sources \
     opt/datadog-agent/embedded/share/doc \

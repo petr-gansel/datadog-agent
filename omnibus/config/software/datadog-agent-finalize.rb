@@ -128,11 +128,11 @@ build do
             move "#{install_dir}/etc/datadog-agent/conf.d", "/etc/datadog-agent", :force=>true
             move "#{install_dir}/etc/datadog-agent/runtime-security.d", "/etc/datadog-agent", :force=>true
             move "#{install_dir}/etc/datadog-agent/security-agent.yaml.example", "/etc/datadog-agent", :force=>true
-            move "#{install_dir}/etc/datadog-agent/compliance.d", "/etc/datadog-agent"
+            move "#{install_dir}/etc/datadog-agent/compliance.d", "/etc/datadog-agent", :force=>true
 
             # Move SELinux policy
             if debian? || redhat?
-              move "#{install_dir}/etc/datadog-agent/selinux", "/etc/datadog-agent/selinux"
+              move "#{install_dir}/etc/datadog-agent/selinux", "/etc/datadog-agent/selinux", :force=>true
             end
 
             # Create empty directories so that they're owned by the package

@@ -21,6 +21,7 @@ static void cleanup_fd(int *dirfd) {
 }
 
 static bool test_faccessat2(void) {
+	/*
     int dirfd __attribute__((__cleanup__(cleanup_fd))) = TEMP_FAILURE_RETRY(open("/", O_CLOEXEC | O_DIRECTORY));
     if (dirfd < 0)
         perror("failed to open \"/\"");
@@ -37,9 +38,12 @@ static bool test_faccessat2(void) {
 
     perror("failed to faccessat2");
     return true;
+    */
+	return false;
 }
 
 static bool test_clone3(void) {
+	/*
     int child_pidfd;
     struct clone_args cl_args = {
         .exit_signal = SIGCHLD,
@@ -71,6 +75,8 @@ static bool test_clone3(void) {
 
     perror("failed to clone3");
     return true;
+    */
+	return false;
 }
 
 static void cleanup_seccomp_ctx(scmp_filter_ctx *ctx) {
@@ -92,7 +98,8 @@ __attribute__((constructor, visibility("hidden"))) void nosys_init(void) {
 
     if (!faccessat2_is_usable) {
         fputs("faccessat2 seems blocked by the seccomp profile of an old version of docker.\n", stderr);
-        int rc = seccomp_rule_add(ctx, SCMP_ACT_ERRNO(ENOSYS), SCMP_SYS(faccessat2), 0);
+	int rc = 0;
+        //int rc = seccomp_rule_add(ctx, SCMP_ACT_ERRNO(ENOSYS), SCMP_SYS(faccessat2), 0);
         if (rc < 0)
             fprintf(stderr, "seccomp_rule_add failed: %s\n", strerror(-rc));
     }

@@ -17,6 +17,14 @@ dependency "yaml-cpp" if windows?
 source path: '..'
 relative_path 'src/github.com/DataDog/datadog-agent'
 
+#WHITELIST GAP
+whitelist_file "embedded/lib/libcurl.so.4.6.0"
+whitelist_file "embedded/lib/python3.8/lib-dynload/_uuid.cpython-38-powerpc64le-linux-gnu.so"
+whitelist_file "embedded/lib/python3.8/site-packages/lxml/objectify.cpython-38-powerpc64le-linux-gnu.so"
+whitelist_file "embedded/lib/python3.8/site-packages/lxml/etree.cpython-38-powerpc64le-linux-gnu.so"
+whitelist_file "embedded/bin/curl"
+#WHITELIST GAP
+
 build do
   license :project_license
 

@@ -294,6 +294,7 @@ def image_build(ctx, arch='amd64', base_dir="omnibus", python_version="2", skip_
     build_context = "Dockerfiles/agent"
     base_dir = base_dir or os.environ.get("OMNIBUS_BASE_DIR")
     pkg_dir = os.path.join(base_dir, 'pkg')
+#    deb_arch = arch.replace("ppc64le","ppc64el")
     deb_glob = f'datadog-agent*_{arch}.deb'
     dockerfile_path = f"{build_context}/Dockerfile"
     list_of_files = glob.glob(os.path.join(pkg_dir, deb_glob))
