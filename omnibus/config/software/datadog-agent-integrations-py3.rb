@@ -29,6 +29,19 @@ if osx?
   dependency 'unixodbc'
 end
 
+if ppc64le?
+#  dependency 'libidn2-0'
+#  dependency 'libunistring2'
+  dependency 'libuuid'
+  dependency 'libxml2'
+#  dependency 'libicu66'
+  dependency 'zlib'
+  dependency 'liblzma'
+  dependency 'libxslt'
+#  dependency 'libgcrypt20'
+#  dependency 'libgpg-error0'
+end
+
 if linux?
   # add nfsiostat script
   dependency 'unixodbc'

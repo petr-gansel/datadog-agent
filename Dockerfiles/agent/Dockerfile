@@ -18,7 +18,7 @@ RUN if [ "$CIBUILD" = "true" ]; then \
   fi
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt update
+RUN apt update -y
 
 FROM baseimage AS nosys-seccomp
 COPY nosys-seccomp/nosys.c   /tmp/nosys.c
@@ -127,7 +127,8 @@ RUN apt full-upgrade -y \
   # this can be removed
   # Install libssl-dev as it's required by some Python checks and we rely on system version
   # Install libseccomp2 as required by `nosys-seccomp` wrapper
-  && apt install -y iproute2 libssl-dev libseccomp2 tzdata
+  #&& apt install -y iproute2 libssl-dev libseccomp2 tzdata
+  && apt install -y iproute2 libssl-dev libseccomp2 tzdata libunistring2 libidn2-0
 
 # Install openjdk-11-jre-headless on jmx flavor
 RUN if [ -n "$WITH_JMX" ]; then echo "Pulling openjdk-11 from testing" \

@@ -19,9 +19,6 @@ relative_path 'src/github.com/DataDog/datadog-agent'
 
 #WHITELIST GAP
 whitelist_file "embedded/lib/libcurl.so.4.6.0"
-whitelist_file "embedded/lib/python3.8/lib-dynload/_uuid.cpython-38-powerpc64le-linux-gnu.so"
-whitelist_file "embedded/lib/python3.8/site-packages/lxml/objectify.cpython-38-powerpc64le-linux-gnu.so"
-whitelist_file "embedded/lib/python3.8/site-packages/lxml/etree.cpython-38-powerpc64le-linux-gnu.so"
 whitelist_file "embedded/bin/curl"
 #WHITELIST GAP
 
@@ -123,7 +120,7 @@ build do
   block do
     # defer compilation step in a block to allow getting the project's build version, which is populated
     # only once the software that the project takes its version from (i.e. `datadog-agent`) has finished building
-    platform = windows_arch_i386? ? "x86" : "x64"
+    platform = windows_arch_i386? ? "x86" : "ppc64le"
     command "invoke trace-agent.build --python-runtimes #{py_runtimes_arg} --major-version #{major_version_arg} --arch #{platform} --flavor #{flavor_arg}", :env => env
 
     if windows?

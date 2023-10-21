@@ -47,10 +47,12 @@ arch_mapping = {
     "i686": "x86",
     "aarch64": "arm64",  # linux
     "arm64": "arm64",  # darwin
+    "ppc64le": "ppc64le",  # powerpc
+    "powerpc64le": "ppc64le",  # powerpc
 }
 CURRENT_ARCH = arch_mapping.get(platform.machine(), "x64")
-CLANG_VERSION_RUNTIME = "12.0.1"
-CLANG_VERSION_SYSTEM_PREFIX = "12.0"
+CLANG_VERSION_RUNTIME = "12.0.0"
+CLANG_VERSION_SYSTEM_PREFIX = "12.0.0"
 
 
 def ninja_define_windows_resources(ctx, nw, major_version):
@@ -1061,9 +1063,13 @@ def run_ninja(
 def setup_runtime_clang(ctx):
     # check if correct version is already present
     sudo = "sudo" if not is_root() else ""
+
+    shutil.copy(os.path.join("/usr/lib/llvm-12/bin", "clang"), os.path.join("/opt/datadog-agent/embedded/bin", "clang-bpf"))
+    shutil.copy(os.path.join("/usr/lib/llvm-12/bin", "llc"), os.path.join("/opt/datadog-agent/embedded/bin", "llc-bpf"))
+
     clang_res = ctx.run(f"{sudo} /opt/datadog-agent/embedded/bin/clang-bpf --version", warn=True)
     llc_res = ctx.run(f"{sudo} /opt/datadog-agent/embedded/bin/llc-bpf --version", warn=True)
-    clang_version_str = clang_res.stdout.split("\n")[0].split(" ")[2].strip() if clang_res.ok else ""
+    clang_version_str = clang_res.stdout.split("\n")[0].split(" ")[3].split("-")[0].strip() if clang_res.ok else ""
     llc_version_str = llc_res.stdout.split("\n")[1].strip().split(" ")[2].strip() if llc_res.ok else ""
 
     if not os.path.exists("/opt/datadog-agent/embedded/bin"):
@@ -1072,6 +1078,8 @@ def setup_runtime_clang(ctx):
     arch = arch_mapping.get(platform.machine())
     if arch == "x64":
         arch = "amd64"
+
+    print("clang: {c}, llc: {l}...\n".format(c=clang_version_str, l=llc_version_str))
 
     if clang_version_str != CLANG_VERSION_RUNTIME:
         # download correct version from dd-agent-omnibus S3 bucket
@@ -1231,6 +1239,7 @@ def check_for_ninja(ctx):
     if is_windows:
         ctx.run("where ninja")
     else:
+        print("..here..")
         ctx.run("which ninja")
 
 
